@@ -7,18 +7,32 @@
 #include <signal.h>  // To catch the signal for ctrl + c
 #include <stdlib.h>  // Needed for signal handler
 #include <unistd.h>  // To define sleep
+#include <string.h>  // for string manipulation 
 
 sem_t *sema;
-char *name = "named_semaphore";
+char *semaname = "named_semaphore";
 int VALUE = 0;
 int SLEEP_TIME = 2;
 
 void int_handler(int s)
 {
     sem_close(sema);
-    sem_unlink(name);
-    printf("\n\n\nCaught signal %d\n\n\n", s);
+    sem_unlink(semaname);
+    printf("\n\n\nCaught signal %d - Exiting and closing semaphore\n\n\n", s);
     exit(1);
+}
+
+void printBanner(char *filename)
+
+{
+    char *banner = malloc(strlen(filename) + 1 + 1);
+    for (int i = 0; i < strlen(filename) + 4; i++)
+    {
+        strncat(banner, "*", 1);
+    }
+    printf("\n%s\n", banner);
+    printf("* %s *", filename);
+    printf("\n%s\n\n", banner);
 }
 
 void *firstThread(void *arg)
@@ -47,14 +61,16 @@ void *secondThread(void *arg)
     return 0;
 }
 
-int main()
+int main(int argc, char **argv)
 {
     int testInteger;
 
     signal(SIGINT, int_handler);
-    
-    printf("Open or Create a named semaphore, %s, its value is %d\n", name, VALUE);
-    sema = sem_open(name, O_CREAT, 0666, VALUE);
+
+    printBanner(argv[0]);
+
+    printf("Open or Create a named semaphore, %s, its value is %d\n", semaname, VALUE);
+    sema = sem_open(semaname, O_CREAT, 0666, VALUE);
  
     pthread_t t1, t2;
 
@@ -72,7 +88,7 @@ int main()
     else {
         printf("Number not 1 or 2 - exiting...");
         sem_close(sema);
-        sem_unlink(name);
+        sem_unlink(semaname);
         exit(0);
     }
 
@@ -102,8 +118,8 @@ int main()
     // pthread_join(t2, NULL);
     // pthread_join(t3, NULL);
     sleep(SLEEP_TIME);
-    printf("\nWrapping main function..\n");
+    printf("\nWrapping main function and closing semaphore..\n");
     sem_close(sema);
-    sem_unlink(name);
+    sem_unlink(semaname);
     return 0;
 }
