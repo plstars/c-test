@@ -4,63 +4,105 @@
 #include <semaphore.h>
 #include <stdio.h>
 #include <pthread.h>
+#include <signal.h>  //To catch the signal for ctrl + c
+#include <stdlib.h>  //Needed to complie handler without error
+#include <unistd.h>  //To define sleep
 
-void *calc(sem_t *sema)
+sem_t *sema;
+char *name = "my2_semaphore";
+int VALUE = 0;
+int SLEEP_TIME = 2;
+
+void int_handler(int s)
 {
-    printf("Hello_calc\n");
-    /*sem_wait(sema);
-    printf("Hello\n");
-    sem_wait(sema);
-    printf("Hello\n");
-    sem_wait(sema);
-    printf("Hello\n");
-    sem_wait(sema);
-    printf("Hello\n");
-    sem_wait(sema);*/
+    sem_close(sema);
+    sem_unlink(name);
+    printf("Caught signal %d\n\n\n", s);
+    exit(1);
 }
 
-int main(int argc, char *argv[])
+void *firstThread(void *arg)
 {
-    char *name = "my2_semaphore";
-    int VALUE = 0;
-    int i;
-    char ch;
-    int iter = 20;
+    
+    printf("\n Entered firstThread..\n");
+    sem_wait(sema);
+    printf("\n firstThread Reduced Semaphore by 1a..\n");
+    sem_wait(sema);
+    printf("\n firstThread Reduced Semaphore by 1b..\n");
+    sem_wait(sema);
+    printf("\n firstThread Just Exiting...\n");
+    return 0;
+}
+
+void *secondThread(void *arg)
+{
+
+    printf("\n Entered secondThread..\n");
+    sem_wait(sema);
+    printf("\n secondThread Reduced Semaphore by 1a..\n");
+    sem_wait(sema);
+    printf("\n secondThread Reduced Semaphore by 1b..\n");
+    sem_wait(sema);
+    printf("\n secondThread Just Exiting...\n");
+    return 0;
+}
+
+int main()
+{
     int testInteger;
-    int blob;
 
-    sem_t *sema;
-    //If semaphore with name does not exist, then create it with VALUE
-
+    signal(SIGINT, int_handler);
+    
     printf("Open or Create a named semaphore, %s, its value is %d\n", name, VALUE);
     sema = sem_open(name, O_CREAT, 0666, VALUE);
-    printf("Add semaphore by 1\n");
-    sem_post(sema);
-    //wait on semaphore sema and decrease it by 1
+ 
+    pthread_t t1, t2;
 
-    printf("Decrease semaphore by 1\n");
-    sem_wait(sema);
-    printf("Hello1\n");
-    //sem_wait(sema);
-    //printf("Hello2\n");
-
-    //pthread_t tid;
-    //pthread_create(&tid, NULL, calc, (void *) &sema);
-
-    //sem_wait(sema);
-    //printf("Hello3\n");
-
-    //add semaphore sema by 1
-
-    printf("Enter an integer: ");
+    printf("Enter number of threads (1 or 2): ");
     scanf("%d", &testInteger);
     printf("Number = %d\n", testInteger);
 
-    printf("Add semaphore by 1\n");
+    if (testInteger == 1) {
+        pthread_create(&t1, NULL, firstThread, NULL);
+    }
+    else if (testInteger == 2) {
+        pthread_create(&t1, NULL, firstThread, NULL);
+        pthread_create(&t2, NULL, secondThread, NULL);
+    } 
+    else {
+        printf("Number not 1 or 2 - exiting...");
+        sem_close(sema);
+        sem_unlink(name);
+        exit(0);
+    }
+
+    sleep(SLEEP_TIME);
+    printf("\nAdded to Semaphore by 1a..\n");
+    sem_post(sema);
+    sleep(SLEEP_TIME);
+    printf("\nAdded to Semaphore by 1b..\n");
+    sem_post(sema);
+    sleep(SLEEP_TIME);
+    printf("\nAdded to Semaphore by 1c..\n");
+    sem_post(sema);
+    sleep(SLEEP_TIME);
+    printf("\nAdded to Semaphore by 1d..\n");
+    sem_post(sema);
+    sleep(SLEEP_TIME);
+    printf("\nAdded to Semaphore by 1e..\n");
+    sem_post(sema);
+    sleep(SLEEP_TIME);
+    printf("\nAdded to Semaphore by 1f..\n");
+    sem_post(sema);
+    sleep(SLEEP_TIME);
+    printf("\nAdded to Semaphore by 1g..\n");
     sem_post(sema);
 
-    //Before exit, you need to close semaphore and unlink it, when all  processes have
-    //finished using the semaphore, it can be removed from the system using sem_unlink
+    // pthread_join(t1, NULL);             // waits for the thread t1 to terminate
+    // pthread_join(t2, NULL);
+    // pthread_join(t3, NULL);
+    sleep(SLEEP_TIME);
+    printf("\nWrapping main function..\n");
     sem_close(sema);
     sem_unlink(name);
     return 0;
