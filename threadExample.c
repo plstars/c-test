@@ -38,26 +38,26 @@ void printBanner(char *filename)
 void *firstThread(void *arg)
 {
     
-    printf("\n Entered firstThread..\n");
+    printf("-1) Entered firstThread..\n");
     sem_wait(sema);
-    printf("\n firstThread Reduced Semaphore by 1a..\n");
+    printf("-1) firstThread Reduced Semaphore by 1a..\n");
     sem_wait(sema);
-    printf("\n firstThread Reduced Semaphore by 1b..\n");
+    printf("-1) firstThread Reduced Semaphore by 1b..\n");
     sem_wait(sema);
-    printf("\n firstThread Just Exiting...\n");
+    printf("-1) firstThread Just Exiting...\n");
     return 0;
 }
 
 void *secondThread(void *arg)
 {
 
-    printf("\n Entered secondThread..\n");
+    printf("-1* Entered secondThread..\n");
     sem_wait(sema);
-    printf("\n secondThread Reduced Semaphore by 1a..\n");
+    printf("-1* secondThread Reduced Semaphore by 1a..\n");
     sem_wait(sema);
-    printf("\n secondThread Reduced Semaphore by 1b..\n");
+    printf("-1* secondThread Reduced Semaphore by 1b..\n");
     sem_wait(sema);
-    printf("\n secondThread Just Exiting...\n");
+    printf("-1* secondThread Just Exiting...\n");
     return 0;
 }
 
@@ -86,32 +86,32 @@ int main(int argc, char **argv)
         pthread_create(&t2, NULL, secondThread, NULL);
     } 
     else {
-        printf("Number not 1 or 2 - exiting...");
+        printf("Number not 1 or 2 - exiting & cleaning semaphore...");
         sem_close(sema);
         sem_unlink(semaname);
         exit(0);
     }
 
     sleep(SLEEP_TIME);
-    printf("\nAdded to Semaphore by 1a..\n");
+    printf("+1) Added to Semaphore by 1a..\n");
     sem_post(sema);
     sleep(SLEEP_TIME);
-    printf("\nAdded to Semaphore by 1b..\n");
+    printf("+1) Added to Semaphore by 1b..\n");
     sem_post(sema);
     sleep(SLEEP_TIME);
-    printf("\nAdded to Semaphore by 1c..\n");
+    printf("+1) Added to Semaphore by 1c..\n");
     sem_post(sema);
     sleep(SLEEP_TIME);
-    printf("\nAdded to Semaphore by 1d..\n");
+    printf("+1) Added to Semaphore by 1d..\n");
     sem_post(sema);
     sleep(SLEEP_TIME);
-    printf("\nAdded to Semaphore by 1e..\n");
+    printf("+1) Added to Semaphore by 1e..\n");
     sem_post(sema);
     sleep(SLEEP_TIME);
-    printf("\nAdded to Semaphore by 1f..\n");
+    printf("+1) Added to Semaphore by 1f..\n");
     sem_post(sema);
     sleep(SLEEP_TIME);
-    printf("\nAdded to Semaphore by 1g..\n");
+    printf("+1) Added to Semaphore by 1g..\n");
     sem_post(sema);
 
     // pthread_join(t1, NULL);             // waits for the thread t1 to terminate
