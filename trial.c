@@ -4,12 +4,12 @@
 #include <semaphore.h>
 #include <stdio.h>
 #include <pthread.h>
-#include <signal.h>  //To catch the signal for ctrl + c
-#include <stdlib.h>  //Needed to complie handler without error
-#include <unistd.h>  //To define sleep
+#include <signal.h>  // To catch the signal for ctrl + c
+#include <stdlib.h>  // Needed for signal handler
+#include <unistd.h>  // To define sleep
 
 sem_t *sema;
-char *name = "my2_semaphore";
+char *name = "named_semaphore";
 int VALUE = 0;
 int SLEEP_TIME = 2;
 
@@ -17,7 +17,7 @@ void int_handler(int s)
 {
     sem_close(sema);
     sem_unlink(name);
-    printf("Caught signal %d\n\n\n", s);
+    printf("\n\n\nCaught signal %d\n\n\n", s);
     exit(1);
 }
 
