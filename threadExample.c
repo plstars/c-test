@@ -58,6 +58,10 @@ void *secondThread(void *arg)
     printf("-1* secondThread Reduced Semaphore by 1b..\n");
     sem_wait(sema);
     printf("-1* secondThread Just Exiting...\n");
+    while (-1) {
+        sleep(SLEEP_TIME);
+        printf("-1* secondThread still here");
+    }
     return 0;
 }
 
@@ -119,7 +123,10 @@ int main(int argc, char **argv)
     // pthread_join(t3, NULL);
     sleep(SLEEP_TIME);
     printf("\nWrapping main function and closing semaphore..\n");
+    pthread_kill(t1, SIGINT);
+    pthread_kill(t2, SIGINT);
     sem_close(sema);
     sem_unlink(semaname);
+
     return 0;
 }
